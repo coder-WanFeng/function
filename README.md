@@ -1,2 +1,3 @@
 # function
-一个“我的世界”服务器bukkit插件，提供账号保护(登录管理)、云消息等功能
+该分支仅用作html页面展示(https://coder-WanFeng.github.io/function/)
+请不要使用该分支的任何内容！
