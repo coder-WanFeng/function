@@ -1,0 +1,10 @@
+#这是[Function]的配置文件
+
+# 服务器名字
+server_name: FunctionServer
+# Python服务端ip
+py_server_ip: 127.0.0.1
+# Python服务端端口
+py_server_port: 846
+# 注册页的ip/端口
+website_reg:
