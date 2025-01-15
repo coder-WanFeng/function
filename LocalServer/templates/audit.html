@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>审核</title>
+        <link href="/static/css/audit.css" rel="stylesheet">
+        <style>
+
+        </style>
+    </head>
+
+    <body>
+        <form>
+            <input type="text" placeholder="管理员账号">
+            <input type="password" placeholder="管理员密码">
+            <input type="text" placeholder="玩家账号">
+            允许加入服务器:<input type="checkbox" placeholder="允许加入服务器">
+            <button id="submit" type="button">调整玩家状态</button>
+        </form>
+        <p>未审核的玩家列表:{{before_allow_players}}</p>
+
+        <script type="text/javascript" src="/static/js/jquery.js"></script>
+        <script type="text/JavaScript" src="/static/js/audit.js"></script>
+    </body>
+
+</html>
