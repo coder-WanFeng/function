@@ -14,7 +14,7 @@ public class request{
         HttpURLConnection connection = null;
         try {
             // 创建URL对象
-            URL url = new URL(Main.config.py_server_url()+route);
+            URL url = new URL(Main.config.local_server_url()+route);
             // 打开连接
             connection = (HttpURLConnection) url.openConnection();
             // 设置请求方法

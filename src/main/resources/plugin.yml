@@ -9,3 +9,5 @@ commands:
     description: 登录到服务器(需要在服务端生效时使用，请在服务端注册!)
   l:
     description: “login”命令的缩写，登录到服务器(需要在服务端生效时使用，请在服务端注册!)
+  get_player_head:
+    description: “获取指定玩家的头颅”

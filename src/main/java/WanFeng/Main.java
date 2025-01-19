@@ -22,13 +22,14 @@ public final class Main extends JavaPlugin {
         config.configs();
 
         //注册监听事件
-        if(config.function_update_player_state()){getServer().getPluginManager().registerEvents(new listenPlayerState(), this);};
-        if(config.function_player_protect()){getServer().getPluginManager().registerEvents(new playerIntercept(this), this);};
-        if(config.function_chat_with_AI()){getServer().getPluginManager().registerEvents(new chatWithBigModel(this),this);};
+        if(config.function_update_player_state()){getServer().getPluginManager().registerEvents(new listenPlayerState(), this);}
+        if(config.function_player_protect()){getServer().getPluginManager().registerEvents(new playerIntercept(), this);}
+        if(config.function_chat_with_AI()){getServer().getPluginManager().registerEvents(new chatWithBigModel(this),this);}
+        if(config.function_get_player_head()){getServer().getPluginManager().registerEvents(new getPlayerHead(this),this);}
         if(config.function_cloud_message()){
             getServer().getPluginManager().registerEvents(new cloudMessages(),this);
             cloudMessages.startUpdateCloudMessage(this);//开始同步云消息
-        };
+        }
     }
 
     @Override
@@ -50,13 +51,13 @@ public final class Main extends JavaPlugin {
                 e.printStackTrace();
             }
         }
-
-        static String py_server_url() {
-            String py_server_url = "http://" + configs.getString("py_server_ip") + ":" + configs.getString("py_server_port") + "/";
-            return py_server_url.replace("\"", "\\\"");
+        //获取LocalServer
+        static String local_server_url() {
+            String local_server_url = "http://" + configs.getString("local_server_ip") + ":" + configs.getString("local_server_port") + "/";
+            return local_server_url.replace("\"", "\\\"");
         }
         static String server_name() {
-            return configs.getString("server_name").replace("\"", "\\\"");
+            return Objects.requireNonNull(configs.getString("server_name")).replace("\"", "\\\"");
         }
         static  String website_reg(){
             String website_reg=configs.getString("website_reg");
@@ -67,10 +68,14 @@ public final class Main extends JavaPlugin {
                 return  website_reg;
             }
         }
-        static boolean function_player_protect(){return configs.getString("player_protect").replace("\"", "\\\"").equals("true");}
-        static boolean function_chat_with_AI(){return configs.getString("chat_with_AI").replace("\"", "\\\"").equals("true");}
-        static boolean function_cloud_message(){return configs.getString("cloud_message").replace("\"", "\\\"").equals("true");}
-        static boolean function_update_player_state(){return configs.getString("update_player_state").replace("\"", "\\\"").equals("true");}
+        static int get_player_head_interval(){return Integer.parseInt(Objects.requireNonNull(configs.getString("get_player_head_interval")));}
+
+        // 功能开启管理
+        static boolean function_player_protect(){return Objects.equals(configs.getString("player_protect"), "true");}
+        static boolean function_chat_with_AI(){return Objects.equals(configs.getString("chat_with_AI"), "true");}
+        static boolean function_cloud_message(){return Objects.equals(configs.getString("cloud_message"), "true");}
+        static boolean function_update_player_state(){return Objects.equals(configs.getString("update_player_state"), "true");}
+        static boolean function_get_player_head(){return Objects.requireNonNull(configs.getString("get_player_head")).replace("\"", "\\\"").equals("true");}
 
     }
 

@@ -25,13 +25,9 @@ import java.util.Set;
 
 public class playerIntercept implements Listener {
 
-    private final Main plugin;
-    private static Set<String> blockedPlayers;
+//    private final Main plugin;
+    private static final Set<String> blockedPlayers= new HashSet<>();
 
-    public playerIntercept(Main plugin) {
-        this.plugin = plugin;
-        blockedPlayers = new HashSet<>();
-    }
 
     @EventHandler
     public void onPlayerQuit(PlayerQuitEvent event) {
@@ -172,9 +168,9 @@ public class playerIntercept implements Listener {
 
     @EventHandler
     public void onCraftItem(CraftItemEvent event) {
-        if (blockedPlayers.contains(((Player) event.getWhoClicked()).getName())) {
+        if (blockedPlayers.contains((event.getWhoClicked()).getName())) {
             event.setCancelled(true);
-            ((Player) event.getWhoClicked()).sendMessage("["+Main.config.server_name()+"]请先登录!");
+            (event.getWhoClicked()).sendMessage("["+Main.config.server_name()+"]请先登录!");
         }
     }
 
@@ -221,9 +217,9 @@ public class playerIntercept implements Listener {
 
     @EventHandler
     public void onEntityMount(EntityMountEvent event) {
-        if (event.getEntity() instanceof Player && blockedPlayers.contains(((Player) event.getEntity()).getName())) {
+        if (event.getEntity() instanceof Player && blockedPlayers.contains((event.getEntity()).getName())) {
             event.setCancelled(true);
-            ((Player) event.getEntity()).sendMessage("["+Main.config.server_name()+"]请先登录!");
+            (event.getEntity()).sendMessage("["+Main.config.server_name()+"]请先登录!");
         }
     }
     @EventHandler
