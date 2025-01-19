@@ -70,7 +70,7 @@ public final class Main extends JavaPlugin {
         static boolean function_player_protect(){return configs.getString("player_protect").replace("\"", "\\\"").equals("true");}
         static boolean function_chat_with_AI(){return configs.getString("chat_with_AI").replace("\"", "\\\"").equals("true");}
         static boolean function_cloud_message(){return configs.getString("cloud_message").replace("\"", "\\\"").equals("true");}
-        static boolean function_update_player_state(){return configs.getString("supdate_player_state").replace("\"", "\\\"").equals("true");}
+        static boolean function_update_player_state(){return configs.getString("update_player_state").replace("\"", "\\\"").equals("true");}
 
     }
 
