@@ -1,3 +1,4 @@
+#coding=utf-8
 import os, json, time
 
 class codes():
@@ -10,7 +11,7 @@ class codes():
 
     # 前端
     def login(request):
-        data = request.get_json()
+        data = request.get_json(force=True)
         print(data)
         emial_file = "users/email/{}.json".format(data["email"])
         if data["in_or_up"] == "in":
@@ -42,7 +43,7 @@ class codes():
                 return {"res": True, "msg": "注册成功", "user_info": data}
             
     def forget_password(request):
-        data = request.get_json()
+        data = request.get_json(force=True)
         user_file = "users/username/{}.json".format(data["username"])
         if os.path.exists(user_file):
             with open(user_file, "r", encoding="utf-8") as f:
@@ -56,7 +57,7 @@ class codes():
             return {"res": False, "msg": "找回账号失败,邮箱未注册"}
         
     def audit_player(request):
-        data = request.get_json()
+        data = request.get_json(force=True)
         admin_file="admins/{}.json".format(data["admin_name"])
         if os.path.exists(admin_file):
             with open(admin_file, "r", encoding="utf-8") as f:
@@ -96,7 +97,7 @@ class codes():
 
      # 插件api
     def player_login(request):
-        data = request.get_json()
+        data = request.get_json(force=True)
         user_file = "users/username/{}.json".format(data["player_name"])
         if os.path.exists(user_file):
             with open(user_file, "r", encoding="utf-8") as f:
@@ -113,7 +114,7 @@ class codes():
             return "false:您还未注册，请前往我们的网站注册!"
         
     def players_join(request):
-        data = request.get_json()
+        data = request.get_json(force=True)
         player_name=data["player_name"]
         server=data["server"]
         with open("processing/online_players.json", "r", encoding="utf-8") as f:
@@ -121,18 +122,18 @@ class codes():
             f.close()
         if {"player_name":player_name,"state":"join","server":server} in online_players:
             online_players=[]
-            online_players.append({"player_name":player_name,"state":"join","server":server})
-            with open("processing/online_players.json", "w", encoding="utf-8") as f:
-                json.dump(online_players,f,ensure_ascii=False, indent=4)
-                f.close()
         else:
             for online_player in online_players:
                 if online_player["player_name"]==player_name:
                     return "error  您已加入其它服务器!"
+        online_players.append({"player_name":player_name,"state":"join","server":server})
+        with open("processing/online_players.json", "w", encoding="utf-8") as f:
+            json.dump(online_players,f,ensure_ascii=False, indent=4)
+            f.close()
         return "success"
 
     def players_login(request):
-        data = request.get_json()
+        data = request.get_json(force=True)
         player_name=data["player_name"]
         server=data["server"]
         with open("processing/online_players.json", "r", encoding="utf-8") as f:
@@ -147,7 +148,7 @@ class codes():
         return "success"
 
     def players_left(request):
-        data = request.get_json()
+        data = request.get_json(force=True)
         player_name=data["player_name"]
         with open("processing/online_players.json", "r", encoding="utf-8") as f:
             online_players = json.load(f)
@@ -189,21 +190,23 @@ class codes():
         elif post_from=="server":
             timestamp=int(time.time()*1000)
             for cloud_message in cloud_messages_list:
-                print(timestamp , cloud_message["timestamp"] , timestamp - cloud_message["timestamp"])
                 if timestamp - cloud_message["timestamp"] < 5000:
                     cloud_messages.append(cloud_message)
             with open("processing/cloud_messages_from_{}.json".format(post_from), "w", encoding="utf-8") as f:
                 json.dump(cloud_messages,f,ensure_ascii=False,)
                 f.close()
             last_timestamp=int(request.args.get('timestamp'))
-            for cloud_message in cloud_messages:
-                print(cloud_message["timestamp"],last_timestamp,cloud_message["timestamp"]-last_timestamp)
-                if cloud_message["timestamp"]<last_timestamp:
-                    cloud_messages.remove(cloud_message)
+            remove_index_list=[]
+            for index in range(len(cloud_messages)):
+                if cloud_messages[index]["timestamp"]<last_timestamp:
+                    remove_index_list.append(index)
+            for index in remove_index_list[::-1]:
+                del cloud_messages[index]
         return cloud_messages
     
     def set_server_messages(request):
-        data = request.get_json()
+        data = request.get_json(force=True)
+        print(data,request.get_data())
         user_file = "users/username/{}.json".format(data["player_name"])
         if os.path.exists(user_file):
             with open(user_file, "r", encoding="utf-8") as f:

@@ -1,4 +1,4 @@
-#coding=UTF-8
+#coding=utf-8
 from flask import Flask, render_template, request#导入库
 
 from codes import codes#导入代码
@@ -29,7 +29,6 @@ def forget_password():
         return render_template("forget_password.html")
     elif request.method == 'POST':
         return codes.forget_password(request)
-
 @app.route('/audit/', methods=['HEAD', 'GET', 'POST'])
 def audit():
     if request.method == 'GET':
