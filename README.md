@@ -51,7 +51,7 @@ LocalServer 目录下为 本地服务器(LocalServer)
 
 路由说明:
 
-1.注册页路由:"/"
+1.注册页路由:"/"、"/login/"
 
 2.审核页路由:"/audit/"
 
