@@ -18,3 +18,15 @@ LocalServer 目录下为 本地服务器(LocalServer)
 3.AI聊天(模型为GLM4F)
 
 4.玩家在线状态更新(需给"/players-online/"路由发送GET请求)
+
+=========================
+
+路由说明:
+
+1.注册页路由:"/"
+
+2.审核页路由:"/audit/"
+
+3.云消息页路由:"/cloud_message/"
+
+4.在线玩家(页)路由:"/players_online/"
