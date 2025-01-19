@@ -7,6 +7,7 @@ import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitRunnable;
 import java.util.Collection;
+
 import static org.bukkit.Bukkit.getServer;
 
 public class cloudMessages implements Listener {
@@ -39,9 +40,19 @@ public class cloudMessages implements Listener {
         String player_name=event.getPlayer().getName();
         if (!playerIntercept.BlockedPlayers().contains(player_name)) {
             String message=event.getMessage();
-            String request_body="{\"player_name\":\""+player_name.replace("\"", "\\\"")+"\",\"cloud_message\":\""+message.replace("\"", "\\\"")+"\",\"post_from\":\"server\"}";
+            String request_body="{\"player_name\":\""+escapeJsonString(player_name)+"\",\"cloud_message\":\""+escapeJsonString(message)+"\",\"post_from\":\"server\"}";
             request.sendRequest("/server-messages/","POST",request_body);
         }
+    }
+
+    private String escapeJsonString(String string) {
+        return string.replace("\\", "\\\\")
+                .replace("\"", "\\\"")
+                .replace("\b", "\\b")
+                .replace("\f", "\\f")
+                .replace("\n", "\\n")
+                .replace("\r", "\\r")
+                .replace("\t", "\\t");
     }
 }
 

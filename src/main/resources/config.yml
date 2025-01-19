@@ -1,10 +1,26 @@
 #这是[Function]的配置文件
 
-# 服务器名字
+
+#基础配置
+#  服务器名字
 server_name: FunctionServer
-# Python服务端ip
+#  Python服务端ip
 py_server_ip: 127.0.0.1
-# Python服务端端口
+#  Python服务端端口
 py_server_port: 846
-# 注册页的ip/端口
+
+
+#功能管理
+#  是否启用账号管理(根路由为注册，audit路由为审核，cloud_message路由为云消息)
+player_protect: true
+#  是否启用AI聊天(使用“-chat 内容”触发)
+chat_with_AI: true
+#  是否启用云消息
+cloud_message: true
+#  是否向本地服务器同步玩家在线信息
+update_player_state: true
+
+
+#参数配置
+#  [账号管理]注册页的ip/端口
 website_reg:

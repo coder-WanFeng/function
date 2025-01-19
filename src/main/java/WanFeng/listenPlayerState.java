@@ -13,7 +13,6 @@ public class listenPlayerState implements Listener {
     private void onPlayerJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
         String player_name=player.getName();
-        System.out.println("{\"player_name\":\"" + player_name + "\",\"server\":\""+Main.config.server_name()+"\"}");
         request.sendRequest("players-join/", "POST", "{\"player_name\":\"" + player_name + "\",\"server\":\""+Main.config.server_name()+"\"}");
     }
 

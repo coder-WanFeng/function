@@ -1,9 +1,7 @@
 package WanFeng;
 
-import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
@@ -15,16 +13,22 @@ public final class Main extends JavaPlugin {
 
     @Override
     public void onEnable() {
+
         plugin = this;
-        saveDefaultConfig();//保存默认配置文件
-        //注册监听事件
-        getServer().getPluginManager().registerEvents(new listenPlayerState(), this);
-        getServer().getPluginManager().registerEvents(new cloudMessages(),this);
-        getServer().getPluginManager().registerEvents(new playerIntercept(this), this);
+
+        saveDefaultConfig();//保存默认配置文件(如果没有的话)
+
         //初始化配置文件
         config.configs();
-        //看来是同步云消息
-        cloudMessages.startUpdateCloudMessage(this);
+
+        //注册监听事件
+        if(config.function_update_player_state()){getServer().getPluginManager().registerEvents(new listenPlayerState(), this);};
+        if(config.function_player_protect()){getServer().getPluginManager().registerEvents(new playerIntercept(this), this);};
+        if(config.function_chat_with_AI()){getServer().getPluginManager().registerEvents(new chatWithBigModel(this),this);};
+        if(config.function_cloud_message()){
+            getServer().getPluginManager().registerEvents(new cloudMessages(),this);
+            cloudMessages.startUpdateCloudMessage(this);//开始同步云消息
+        };
     }
 
     @Override
@@ -32,20 +36,8 @@ public final class Main extends JavaPlugin {
         listenPlayerState.onServerDisable();
     }
 
-    public void login(String playerName, String[] args) {
-        Player player = Bukkit.getServer().getPlayer(playerName);
-        String response = request.sendRequest("player-login/", "POST", "{\"player_name\":\"" + playerName + "\",\"password\":\"" + args[0] + "\"}");
-        if (response != null && player != null) {
-            String message = response.substring(6);
-            if (response.startsWith("true ")) {
-                playerIntercept.unblockPlayer(playerName);
-                player.sendMessage("["+Main.config.server_name()+"]"+message);
-                listenPlayerState.updateAfterLogin(playerName);
-            } else {
-                player.kickPlayer(message);
-            }
-        }
-    }
+
+    //获取配置文件
     public static class config{
 
         private static FileConfiguration configs;
@@ -75,6 +67,11 @@ public final class Main extends JavaPlugin {
                 return  website_reg;
             }
         }
+        static boolean function_player_protect(){return configs.getString("player_protect").replace("\"", "\\\"").equals("true");}
+        static boolean function_chat_with_AI(){return configs.getString("chat_with_AI").replace("\"", "\\\"").equals("true");}
+        static boolean function_cloud_message(){return configs.getString("cloud_message").replace("\"", "\\\"").equals("true");}
+        static boolean function_update_player_state(){return configs.getString("supdate_player_state").replace("\"", "\\\"").equals("true");}
+
     }
 
 }

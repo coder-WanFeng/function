@@ -5,6 +5,7 @@ import java.io.DataOutputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 
 public class request{
 
@@ -25,12 +26,13 @@ public class request{
                 // 发送POST请求必须设置如下两行
                 connection.setRequestProperty("Content-Type", "application/json");
                 connection.setRequestProperty("charset", "utf-8");
-                connection.setRequestProperty("Content-Length", Integer.toString(body.getBytes().length));
+                connection.setRequestProperty("Content-Length", Integer.toString(body.getBytes(StandardCharsets.UTF_8).length));
+
                 connection.setUseCaches(false);
 
                 // 发送请求参数
                 DataOutputStream wr = new DataOutputStream(connection.getOutputStream());
-                wr.writeBytes(body);
+                wr.write(body.getBytes(StandardCharsets.UTF_8));
                 wr.close();
             }
 

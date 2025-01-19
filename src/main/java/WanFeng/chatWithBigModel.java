@@ -4,7 +4,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.AsyncPlayerChatEvent;
+import org.bukkit.event.player.*;
 import org.bukkit.plugin.Plugin;
 
 import java.io.BufferedReader;
@@ -19,16 +19,23 @@ import java.util.stream.Collectors;
 
 import static org.bukkit.Bukkit.getServer;
 
+
 public class chatWithBigModel implements Listener {
+
+    private final Plugin plugin;
+    public chatWithBigModel(Plugin plugin) {
+        this.plugin = plugin;
+    }
     //监听玩家发言
     @EventHandler
-    public void onPlayerChat(AsyncPlayerChatEvent event) {
+    public void onPlayerChatWithGLM(AsyncPlayerChatEvent event) {
         String message = event.getMessage();
         //检测关键词" -chat "为开头的发言
-        if (message.startsWith("-chat")) {
+        if (message.startsWith("-chat ")) {
             String textContent = message.substring(6).trim();
+            System.out.println(textContent);
             Player player = event.getPlayer();
-            Bukkit.getScheduler().runTaskAsynchronously((Plugin) this, () -> sendChatMessage(player.getName(), textContent));
+            Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> sendChatMessage(player.getName(), textContent));
         }
     }
 
@@ -44,6 +51,7 @@ public class chatWithBigModel implements Listener {
             connection.setRequestProperty("Content-Type", "application/json");
             //创建请求体
             String requestBody = createJsonRequestBody(textContent);
+            System.out.println(requestBody);
             //发送请求
             try (OutputStream outputStream = connection.getOutputStream()) {
                 outputStream.write(requestBody.getBytes());
@@ -83,10 +91,9 @@ public class chatWithBigModel implements Listener {
             }
         } catch (Exception e) {
             //抛出异常
-            String responseMessage = "["+Main.config.server_name()+"][挽枫轻言]To: " + playerName + ": Error sending message (Exception: " + e.getMessage() + ")";
-            for (Player player : getServer().getOnlinePlayers()) {
-                player.sendMessage(responseMessage);
-            }
+            String responseMessage = "["+Main.config.server_name()+"][挽枫轻言]: Player:\"" + playerName + "\" Error sending message (Exception: " + e.getMessage() + ")";
+            System.out.println(responseMessage);
+            getServer().getPlayer(playerName).sendMessage(responseMessage);
             e.printStackTrace();
         }
     }

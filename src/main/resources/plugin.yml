@@ -1,9 +1,9 @@
 name: Function
-version: '1.0.0'
+version: '1.0.1'
 main: WanFeng.Main
 api-version: '1.18.2'
-authors: [ 挽枫 ]
-description: [Function]服务器多功能综合工具(插件部分)(注:还需要服务端)
+authors: [ '挽枫']
+description: Function，服务器多功能综合工具(插件部分)(注:还需要服务端)
 commands:
   login:
     description: 登录到服务器(需要在服务端生效时使用，请在服务端注册!)

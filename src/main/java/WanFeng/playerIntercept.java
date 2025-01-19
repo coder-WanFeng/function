@@ -2,6 +2,7 @@ package WanFeng;
 
 
 
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -232,7 +233,7 @@ public class playerIntercept implements Listener {
         if (command.equalsIgnoreCase("login") || command.equalsIgnoreCase("l")) {
             if (blockedPlayers.contains(player.getName())) {
                 String[] args = event.getMessage().split(" ");
-                plugin.login(player.getName(), args.length > 1 ? Arrays.copyOfRange(args, 1, args.length) : new String[0]);
+                login(player.getName(), args.length > 1 ? Arrays.copyOfRange(args, 1, args.length) : new String[0]);
             }
             else{
                 player.sendMessage("[" + Main.config.server_name() + "]您已登录!");
@@ -251,6 +252,22 @@ public class playerIntercept implements Listener {
         if (blockedPlayers.contains(event.getPlayer().getName())) {
             event.setCancelled(true);
             event.getPlayer().sendMessage("["+Main.config.server_name()+"]请先登录!");
+        }
+    }
+
+    //玩家登录
+    public void login(String playerName, String[] args) {
+        Player player = Bukkit.getServer().getPlayer(playerName);
+        String response = request.sendRequest("player-login/", "POST", "{\"player_name\":\"" + playerName + "\",\"password\":\"" + args[0] + "\"}");
+        if (response != null && player != null) {
+            String message = response.substring(6);
+            if (response.startsWith("true ")) {
+                playerIntercept.unblockPlayer(playerName);
+                player.sendMessage("["+Main.config.server_name()+"]"+message);
+                listenPlayerState.updateAfterLogin(playerName);
+            } else {
+                player.kickPlayer(message);
+            }
         }
     }
 
