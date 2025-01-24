@@ -24,7 +24,9 @@ public class cloudMessages implements Listener {
     private static void updateCloudMessages() {
         String response = request.sendRequest("server-messages/?post_from=website", "GET", "");
         if (response != null && !response.isEmpty()) {
-            String delimiter = "OurVillageTools云消息分割!!!(顺便打广告)[腐竹/管理:羡小冰.Fellow、烟火气、千纥、挽枫·随黄昏而去]";
+//            String split_sentence="LhYwXhNhJl_LrDyH_jHdDg_CcKsJ_wFfGsNdFs_QdBzTdFy__ZyYwF_yTcXzNh_RyZdZwRdXs_FdCbDcL_yLdTnYjRsDcSxF";
+//            String[] MessagesList = response.split(split_sentence);
+            String delimiter = "ZsFjX_WxHlHy_TsWcZtX_TdWxMs_lllikikind1212_SjHs_13212275395_QqHs_2303968216";
             String[] MessagesList = response.split(delimiter);
             Collection<? extends Player> onlinePlayers = getServer().getOnlinePlayers();
             for (String message : MessagesList){
