@@ -12,7 +12,6 @@ class codes():
     # 前端
     def login(request):
         data = request.get_json(force=True)
-        print(data)
         emial_file = "users/email/{}.json".format(data["email"])
         if data["in_or_up"] == "in":
             if os.path.exists(emial_file):
@@ -180,12 +179,13 @@ class codes():
             f.close()
         cloud_messages = []
         if post_from=="website":
-            split_content="OurVillageTools云消息分割!!!(顺便打广告)[腐竹/管理:羡小冰.Fellow、烟火气、千纥、挽枫·随黄昏而去]"
+            split_content="ZsFjX_WxHlHy_TsWcZtX_TdWxMs_lllikikind1212_SjHs_13212275395_QqHs_2303968216"
+            # split_sentence="LhYwXhNhJl_LrDyH_jHdDg_CcKsJ_wFfGsNdFs_QdBzTdFy__ZyYwF_yTcXzNh_RyZdZwRdXs_FdCbDcL_yLdTnYjRsDcSxF"
             with open("processing/cloud_messages_from_{}.json".format(post_from), "w", encoding="utf-8") as f:
-                json.dump([],f,ensure_ascii=False,)
+                json.dump([],f,ensure_ascii=False,indent=4)
                 f.close()
             for cloud_message in cloud_messages_list:
-                cloud_messages.append(split_content+"[云消息]<"+cloud_message["player_name"]+">"+cloud_message["cloud_message"])
+                cloud_messages.append(split_content+"[云消息]<"+cloud_message["player_name"]+">"+cloud_message["cloud_message"])#+split_sentence)
             cloud_messages="".join(cloud_messages)[len(split_content):]
         elif post_from=="server":
             timestamp=int(time.time()*1000)
@@ -193,20 +193,19 @@ class codes():
                 if timestamp - cloud_message["timestamp"] < 5000:
                     cloud_messages.append(cloud_message)
             with open("processing/cloud_messages_from_{}.json".format(post_from), "w", encoding="utf-8") as f:
-                json.dump(cloud_messages,f,ensure_ascii=False,)
+                json.dump(cloud_messages,f,ensure_ascii=False,indent=4)
                 f.close()
             last_timestamp=int(request.args.get('timestamp'))
             remove_index_list=[]
             for index in range(len(cloud_messages)):
                 if cloud_messages[index]["timestamp"]<last_timestamp:
                     remove_index_list.append(index)
-            for index in remove_index_list[::-1]:
-                del cloud_messages[index]
+            for _index in sorted(remove_index_list, reverse=True):
+                del cloud_messages[_index]
         return cloud_messages
     
     def set_server_messages(request):
         data = request.get_json(force=True)
-        print(data,request.get_data())
         user_file = "users/username/{}.json".format(data["player_name"])
         if os.path.exists(user_file):
             with open(user_file, "r", encoding="utf-8") as f:
@@ -226,8 +225,6 @@ class codes():
                     return {"res": True, "msg": "云消息发送成功"}
                 elif data["post_from"]=="website":
                     if server_data["password"] == data["password"]:
-                        timestamp=int(time.time()*1000)
-                        data["timestamp"]=timestamp
                         del data["password"]
                         with open("processing/cloud_messages_from_website.json", "r", encoding="utf-8") as f:
                             cloud_messages = json.load(f)
@@ -249,4 +246,25 @@ class codes():
             else:
                 return {"res": False, "msg": "云消息发送成功失败，您未通过审核"}
         else:
-                return {"res": False, "msg": "云消息发送成功失败，账号不存在"}
+            return {"res": False, "msg": "云消息发送成功失败，账号不存在"}
+    def get_server_timestamp(request,bit=3,Int=True,to_str=False):
+        if request.args.get("bit")!=None:
+            bit=request.args.get("bit")
+            try:
+                bit=int(bit)
+            except:
+                return {"res": False, "msg": "放大数位必须是整数!"}
+        if request.args.get("int")!=None:
+            Int=request.args.get("int")
+            try:
+                Int=bool(Int)
+            except:
+                return {"res": False, "msg": "整数格式化必须是布尔类型!"}
+        timestamp=time.time()
+        server_timestamp=timestamp*(10**bit)
+        if Int:
+            server_timestamp=int(server_timestamp)
+        if to_str:
+            server_timestamp=str(server_timestamp)
+        print(to_str,Int,bit,10**bit,timestamp,server_timestamp)
+        return {"res": True, "msg": "时间戳获取成功","timestamp":server_timestamp}

@@ -1,7 +1,10 @@
 #coding=utf-8
 from flask import Flask, render_template, request#导入库
 
+import time
+
 from codes import codes#导入代码
+
 
 # 创建对象
 app = Flask(__name__)
@@ -10,7 +13,6 @@ app = Flask(__name__)
 #  前端访问
 @app.route('/', methods=['HEAD', 'GET', 'POST'])
 def index():
-    print(str(request.method)+"")
     if request.method == 'GET':
         return render_template("login.html")
     elif request.method == 'POST':
@@ -68,6 +70,9 @@ def server_messages():
         return codes.get_server_messages(request)
     else:
         return codes.set_server_messages(request)
+@app.route('/server-timestamp/', methods=['GET'])
+def server_timestamp():
+    return codes.get_server_timestamp(request,to_str=True)
 # 后端，启动！
 if __name__ == "__main__":
     app.run(debug=False, host="0.0.0.0", port=846, threaded=True)

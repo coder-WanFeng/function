@@ -28,8 +28,8 @@ function sign_up(){
   const inputs=document.getElementsByClassName("input");
   //判断输入内容是否为空
   for(let i=0;i++;i<3){
-    if(!inputs[i].value){
-      alert(["用户名","邮箱","密码"][i]+"不能为空");
+    if(!inputs[i].value || inputs[i].value.includes(' ')){
+      alert(["用户名","邮箱","密码"][i]+"不能为空，且不能包含空格");
       return;
     }
   };

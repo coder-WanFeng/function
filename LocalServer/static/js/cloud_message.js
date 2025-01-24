@@ -3,7 +3,9 @@ submit_cloud_message.addEventListener("click", () => {
   post_cloud_messgae();
   // alert("未完工")
 });
-max_length=100;
+max_length=200;
+delta_timestamp=0;
+is_get=false;
 const inputarea=document.getElementById("inputarea");
 inputarea.addEventListener("input", () => {
   if(document.getElementById("inputarea").value.length>max_length){
@@ -11,10 +13,15 @@ inputarea.addEventListener("input", () => {
     document.getElementById("inputarea").value=document.getElementById("inputarea").value.slice(0,max_length);
   }
 });
+start_update_timestamp();
 
-get_cloud_messages_from_server(Math.floor(Date.now()-1000))
+
 
 function post_cloud_messgae(){
+  if(is_get){
+    setTimeout(function(){post_cloud_messgae()},50)
+  }
+  else{
     const inputs=document.getElementsByTagName("input");
     for(let i=0;i<3;i++){
         if(!inputs[i].value){
@@ -27,43 +34,49 @@ function post_cloud_messgae(){
       document.getElementById("inputarea").value=document.getElementById("inputarea").value.slice(0,max_length);
       return;
     }
+    const timestamp=Math.floor(Date.now() - delta_timestamp);
+    console.log(timestamp)
     const post_data={
         "player_name":inputs[0].value,
         "password":inputs[1].value,
         "cloud_message":inputs[2].value,
-        "post_from":"website"
+        "post_from":"website",
+        "timestamp":timestamp
       }
-
     $.ajax({
-        url: "/server-messages/",
-        type: 'POST',
-        contentType: 'application/json', 
-        data: JSON.stringify(post_data),
-        success: function(response) {
-          if(response.msg=="云消息发送成功"){
+      url: "/server-messages/",
+      type: 'POST',
+      contentType: 'application/json', 
+      data: JSON.stringify(post_data),
+      success: function(response) {
+        if(response.msg=="云消息发送成功"){
 
-          }else{
-            alert(response.msg)
-          }
-          // alert("请求成功，响应结果:"+JSON.stringify(response))
-        },
-        error: function(xhr, status, error) {
-          alert("请求异常，响应结果:"+error)
+        }else{
+          alert(response.msg)
         }
-      });
+        // alert("请求成功，响应结果:"+JSON.stringify(response))
+      },
+      error: function(xhr, status, error) {
+        alert("请求异常，响应结果:"+error)
+      }
+    });
+  }
 }
 
 function get_cloud_messages_from_server(last_timestamp){
-  const timestamp=Math.floor(Date.now())
+  is_get=true;
+  let timestamp=last_timestamp+1000
   let HistoryDiv=document.getElementById("HistoryDiv");
   $.ajax({
     url: "/server-messages/?post_from=server&timestamp="+last_timestamp,
     type: 'GET',
     contentType: 'application/json', 
     success: function(response) {
+      timestamp=Math.floor(Date.now() - delta_timestamp);
       for(let i=0;i<response.length;i++){
         //获取消息
         content=response[i]
+        console.log(content)
         //网页端当前名字
         player_name=document.getElementsByTagName("input")[0].value;
         //创建外框
@@ -82,12 +95,43 @@ function get_cloud_messages_from_server(last_timestamp){
         message_box.appendChild(message_div)
         HistoryDiv.appendChild(message_box);
       };
+      setTimeout(function(){
+        get_cloud_messages_from_server(timestamp);
+      },1000);
+      is_get=false;
     },
     error: function(xhr, status, error) {
+      console.log("同步云消息错误，3秒后重新尝试");
+      setTimeout(function(){
+        get_cloud_messages_from_server(timestamp);
+      },3000);
+      is_get=false;
     }
   });
-  setTimeout(function(){
-    get_cloud_messages_from_server(timestamp)
-  },1000)
 }
 
+function update_timestamp(){
+ $.ajax({
+    url: "/server-timestamp/",
+    type: 'GET',
+    contentType: 'application/json', 
+    success: function(response) {
+      if(response.res){
+        delta_timestamp = Math.floor (Date.now() - response.timestamp );
+      }
+      else{
+        alert(response.msg)
+      }
+    },
+    error: function(xhr, status, error) {
+      alert("请求时间戳异常!");
+    }
+  })
+};
+async function start_update_timestamp(){
+  update_timestamp();
+  get_cloud_messages_from_server(Math.floor(Date.now() - delta_timestamp));
+  setInterval(function(){
+    update_timestamp();
+  },5000)
+}
