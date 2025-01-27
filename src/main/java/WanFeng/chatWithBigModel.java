@@ -33,7 +33,6 @@ public class chatWithBigModel implements Listener {
         //检测关键词" -chat "为开头的发言
         if (message.startsWith("-chat ")) {
             String textContent = message.substring(6).trim();
-            System.out.println(textContent);
             Player player = event.getPlayer();
             Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> sendChatMessage(player.getName(), textContent));
         }
@@ -51,7 +50,6 @@ public class chatWithBigModel implements Listener {
             connection.setRequestProperty("Content-Type", "application/json");
             //创建请求体
             String requestBody = createJsonRequestBody(textContent);
-            System.out.println(requestBody);
             //发送请求
             try (OutputStream outputStream = connection.getOutputStream()) {
                 outputStream.write(requestBody.getBytes());
@@ -75,8 +73,11 @@ public class chatWithBigModel implements Listener {
                     //控制台输出
                     String responseMessage=get_res_content(response_str);
                     //向玩家输出
+                    String[] Messages=("["+Main.config.server_name()+"][挽枫轻言](To:" + playerName + "):" +responseMessage).split("\\n");
                     for (Player player : getServer().getOnlinePlayers()) {
-                        player.sendMessage("["+Main.config.server_name()+"][挽枫轻言](To:" + playerName + "):" +responseMessage);
+                        for (String message:Messages){
+                            player.sendMessage(message);
+                        };
                     }
                 }
             } else {
@@ -92,7 +93,6 @@ public class chatWithBigModel implements Listener {
         } catch (Exception e) {
             //抛出异常
             String responseMessage = "["+Main.config.server_name()+"][挽枫轻言]: Player:\"" + playerName + "\" Error sending message (Exception: " + e.getMessage() + ")";
-            System.out.println(responseMessage);
             getServer().getPlayer(playerName).sendMessage(responseMessage);
             e.printStackTrace();
         }

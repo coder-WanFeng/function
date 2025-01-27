@@ -25,6 +25,7 @@ public final class Main extends JavaPlugin {
         if(config.function_update_player_state()){getServer().getPluginManager().registerEvents(new listenPlayerState(), this);}
         if(config.function_player_protect()){getServer().getPluginManager().registerEvents(new playerIntercept(), this);}
         if(config.function_chat_with_AI()){getServer().getPluginManager().registerEvents(new chatWithBigModel(this),this);}
+        if(config.function_chat_with_CatGirl()){getServer().getPluginManager().registerEvents(new chatWithCatGirl(this),this);}
         if(config.function_get_player_head()){getServer().getPluginManager().registerEvents(new getPlayerHead(this),this);}
         if(config.function_cloud_message()){
             getServer().getPluginManager().registerEvents(new cloudMessages(),this);
@@ -69,12 +70,14 @@ public final class Main extends JavaPlugin {
             }
         }
         static int get_player_head_interval(){return Integer.parseInt(Objects.requireNonNull(configs.getString("get_player_head_interval")));}
+        static int cat_girl_memories_time(){return Integer.parseInt(Objects.requireNonNull(configs.getString("cat_girl_memories_time")));}
 
         // 功能开启管理
         static boolean function_player_protect(){return Objects.equals(configs.getString("player_protect"), "true");}
         static boolean function_chat_with_AI(){return Objects.equals(configs.getString("chat_with_AI"), "true");}
         static boolean function_cloud_message(){return Objects.equals(configs.getString("cloud_message"), "true");}
         static boolean function_update_player_state(){return Objects.equals(configs.getString("update_player_state"), "true");}
+        static boolean function_chat_with_CatGirl(){return Objects.equals(configs.getString("chat_with_CatGirl"), "true");}
         static boolean function_get_player_head(){return Objects.requireNonNull(configs.getString("get_player_head")).replace("\"", "\\\"").equals("true");}
 
     }
